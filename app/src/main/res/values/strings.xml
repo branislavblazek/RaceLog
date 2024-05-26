@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RaceLog</string>
+    <string name="watch_race">Watch race</string>
+    <string name="control_point_login">Control point login</string>
 </resources>
