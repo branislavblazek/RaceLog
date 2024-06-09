@@ -5,4 +5,14 @@
     <string name="control_point_login">Prihlásenie stanice</string>
     <string name="view">Prehľad</string>
     <string name="search_athlete">Hľadať meno alebo číslo</string>
+    <string name="status">Stav</string>
+    <string name="finished">V cieli</string>
+    <string name="dns">Neštartoval</string>
+    <string name="dnf">Ukončil</string>
+    <string name="progress">Beží</string>
+    <string name="elapsed">Uplynulý čas</string>
+    <string name="order">Poradie</string>
+    <string name="country">Krajina</string>
+    <string name="team">Tím</string>
+    <string name="age">Vek</string>
 </resources>
