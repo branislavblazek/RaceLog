@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import com.blazek10.racelog.ui.AthleteInfoScreen
 import com.blazek10.racelog.ui.AthleteListScreen
+import com.blazek10.racelog.ui.ControlPointLoginScreen
 import com.blazek10.racelog.ui.StartScreen
 import com.blazek10.racelog.ui.theme.RaceLogTheme
 
@@ -17,7 +18,8 @@ class MainActivity : ComponentActivity() {
             RaceLogTheme {
                 //StartScreen(
                 //AthleteListScreen(
-                AthleteInfoScreen(
+                //AthleteInfoScreen(
+                ControlPointLoginScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             }

@@ -15,4 +15,7 @@
     <string name="country">Krajina</string>
     <string name="team">Tím</string>
     <string name="age">Vek</string>
+    <string name="id">ID stanice</string>
+    <string name="password">Heslo stanice</string>
+    <string name="login">Prihlasiť</string>
 </resources>
