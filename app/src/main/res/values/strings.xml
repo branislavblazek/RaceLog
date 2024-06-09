@@ -17,4 +17,15 @@
     <string name="id">ID</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
+    <string name="bib">BIB</string>
+    <string name="bib_placeholder">Enter BIB</string>
+    <string name="more">More</string>
+    <string name="set_dns">Set DNS</string>
+    <string name="set_dnf">Set DNF</string>
+    <string name="set_dsq">Set DSQ</string>
+    <string name="remove_athlete_title">Remove athlete title</string>
+    <string name="remove_athlete_text">Remove athlete text</string>
+    <string name="remove">Remove</string>
+    <string name="keep">Keep</string>
+    <string name="bib_error">BIB error</string>
 </resources>

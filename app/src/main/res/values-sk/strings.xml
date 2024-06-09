@@ -18,4 +18,15 @@
     <string name="id">ID stanice</string>
     <string name="password">Heslo stanice</string>
     <string name="login">Prihlasiť</string>
+    <string name="bib">Číslo pretekára</string>
+    <string name="bib_placeholder">Vložte číslo</string>
+    <string name="more">Viac</string>
+    <string name="set_dns">Ukončiť - neštartoval</string>
+    <string name="set_dnf">Ukončit - vzdal sa</string>
+    <string name="set_dsq">Ukončiť - diskvalifikácia</string>
+    <string name="remove_athlete_title">Naozaj chcete vyradiť pretekára?</string>
+    <string name="remove_athlete_text">Týmto vyradíte pretekára z pretekov a nebude môcť pokračovať ďalej. Ste si istý?</string>
+    <string name="remove">Vyradiť</string>
+    <string name="keep">Nechať</string>
+    <string name="bib_error">Neplatné číslo!</string>
 </resources>
