@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import com.blazek10.racelog.ui.AthleteListScreen
 import com.blazek10.racelog.ui.StartScreen
 import com.blazek10.racelog.ui.theme.RaceLogTheme
 
@@ -13,7 +14,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RaceLogTheme {
-                StartScreen(
+                //StartScreen(
+                AthleteListScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             }

@@ -3,4 +3,6 @@
     <string name="app_name">RaceLog</string>
     <string name="watch_race">Sledovať pretek</string>
     <string name="control_point_login">Prihlásenie stanice</string>
+    <string name="view">Prehľad</string>
+    <string name="search_athlete">Hľadať meno alebo číslo</string>
 </resources>
