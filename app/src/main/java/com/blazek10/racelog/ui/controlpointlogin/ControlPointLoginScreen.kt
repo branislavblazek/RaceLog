@@ -1,4 +1,4 @@
-package com.blazek10.racelog.ui
+package com.blazek10.racelog.ui.controlpointlogin
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
@@ -24,10 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -37,20 +35,25 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blazek10.racelog.R
 import com.blazek10.racelog.ui.components.BackgroundOverlay
 
 @Composable
-fun ControlPointLoginScreen(modifier: Modifier = Modifier) {
-    var controlPointNameInput by remember { mutableStateOf("") }
-    var controlPointPassInput by remember { mutableStateOf("") }
+fun ControlPointLoginScreen(
+    modifier: Modifier = Modifier,
+    controlPointLoginViewModel: ControlPointLoginViewModel = viewModel()
+) {
+    val controlPointLoginUiState by controlPointLoginViewModel.uiState.collectAsState()
 
     BackgroundOverlay(imageRes = R.drawable.background_login) {
         LoginContent(
-            controlPointNameInput,
-            { controlPointNameInput = it },
-            controlPointPassInput,
-            { controlPointPassInput = it },
+            controlPointLoginUiState.controlPointName,
+            { controlPointLoginViewModel.updateName(it) },
+            controlPointLoginUiState.controlPointPass,
+            { controlPointLoginViewModel.updatePass(it) },
+            controlPointLoginUiState.showPass,
+            { controlPointLoginViewModel.toggleShowPass() },
             modifier
         )
     }
@@ -62,8 +65,9 @@ fun LoginContent(
     onNameValueChange: (String) -> Unit,
     passValue: String,
     onPassValueChange: (String) -> Unit,
+    showPass: Boolean,
+    toggleShowPass: () -> Unit,
     modifier: Modifier = Modifier) {
-    val showPass = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -92,14 +96,14 @@ fun LoginContent(
         LoginInput(
             label = R.string.password,
             leadingIcon = Icons.Filled.Lock,
-            onTrailingIconClick = { showPass.value = !showPass.value },
-            trailingIcon = if (showPass.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+            onTrailingIconClick = { toggleShowPass() },
+            trailingIcon = if (showPass) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
             value = passValue,
             onValueChange = onPassValueChange,
-            visualTransformation = if (showPass.value) VisualTransformation.None else PasswordVisualTransformation()
+            visualTransformation = if (showPass) VisualTransformation.None else PasswordVisualTransformation()
         )
         Button(
             onClick = { /*TODO*/ },
