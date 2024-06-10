@@ -28,4 +28,9 @@
     <string name="remove">Remove</string>
     <string name="keep">Keep</string>
     <string name="bib_error">BIB error</string>
+    <string name="start_screen_title">Start screen</string>
+    <string name="athlete_list_screen_title">Athlete list</string>
+    <string name="athlete_info_screen_title">Athlete info</string>
+    <string name="control_point_login_screen_title">Control point login</string>
+    <string name="control_point_info_screen_title">Control point info</string>
 </resources>

@@ -29,4 +29,9 @@
     <string name="remove">Vyradiť</string>
     <string name="keep">Nechať</string>
     <string name="bib_error">Neplatné číslo!</string>
+    <string name="start_screen_title">RaceLog</string>
+    <string name="athlete_list_screen_title">Výpis pretekárov</string>
+    <string name="athlete_info_screen_title">Informácie o pretekárovi</string>
+    <string name="control_point_login_screen_title">Prihlásenie stanice</string>
+    <string name="control_point_info_screen_title">Stanica</string>
 </resources>

@@ -3,9 +3,7 @@ package com.blazek10.racelog
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Modifier
-import com.blazek10.racelog.ui.athletelist.AthleteListScreen
+import com.blazek10.racelog.ui.racelog.RaceLogApp
 import com.blazek10.racelog.ui.theme.RaceLogTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,13 +11,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RaceLogTheme {
-                //StartScreen(
-                AthleteListScreen(
-                //AthleteInfoScreen(
-                //ControlPointLoginScreen(
-                //ControlPointScreen(
-                    modifier = Modifier.fillMaxSize()
-                )
+                RaceLogApp()
             }
         }
     }

@@ -16,13 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.blazek10.racelog.R
 import com.blazek10.racelog.ui.components.BackgroundOverlay
 
 @Composable
 fun StartScreen(
+    onWatchRaceClicked: () -> Unit,
+    onControlPointLoginClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -32,6 +33,8 @@ fun StartScreen(
         BackgroundOverlay(
             imageRes = R.drawable.background) {
             ActionButtons(
+                onWatchRaceClicked = onWatchRaceClicked,
+                onControlPointLoginClicked = onControlPointLoginClicked,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(8.dp)
@@ -40,9 +43,10 @@ fun StartScreen(
     }
 }
 
-@Preview
 @Composable
 fun ActionButtons(
+    onWatchRaceClicked: () -> Unit,
+    onControlPointLoginClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column (
@@ -51,7 +55,7 @@ fun ActionButtons(
         modifier = modifier
     ) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = onControlPointLoginClicked,
             shape = RoundedCornerShape(15),
             modifier = Modifier.widthIn(min = 300.dp)
         ) {
@@ -59,7 +63,7 @@ fun ActionButtons(
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = onWatchRaceClicked,
             shape = RoundedCornerShape(15),
             modifier = Modifier.widthIn(min = 300.dp)
         ) {

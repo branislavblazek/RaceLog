@@ -41,6 +41,7 @@ import com.blazek10.racelog.ui.components.BackgroundOverlay
 
 @Composable
 fun ControlPointLoginScreen(
+    onLogin: () -> Unit,
     modifier: Modifier = Modifier,
     controlPointLoginViewModel: ControlPointLoginViewModel = viewModel()
 ) {
@@ -54,6 +55,7 @@ fun ControlPointLoginScreen(
             { controlPointLoginViewModel.updatePass(it) },
             controlPointLoginUiState.showPass,
             { controlPointLoginViewModel.toggleShowPass() },
+            onLogin,
             modifier
         )
     }
@@ -67,6 +69,7 @@ fun LoginContent(
     onPassValueChange: (String) -> Unit,
     showPass: Boolean,
     toggleShowPass: () -> Unit,
+    onSend: () -> Unit,
     modifier: Modifier = Modifier) {
 
     Column(
@@ -106,7 +109,7 @@ fun LoginContent(
             visualTransformation = if (showPass) VisualTransformation.None else PasswordVisualTransformation()
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onSend() },
             shape = RoundedCornerShape(15),
             modifier = Modifier.fillMaxWidth()
         ) {
