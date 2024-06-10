@@ -1,4 +1,4 @@
-package com.blazek10.racelog.ui
+package com.blazek10.racelog.ui.controlpoint
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +26,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,50 +41,29 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blazek10.racelog.R
+import com.blazek10.racelog.ui.ButtonWithIcon
 import kotlinx.coroutines.delay
 import java.time.Duration
-import java.time.LocalDateTime
 
 @Composable
-fun ControlPointScreen(modifier: Modifier = Modifier) {
-    var bibValueInput by remember { mutableStateOf("") }
-    val startTime = LocalDateTime.of(2024, 6,9, 6,0)
-    var currentTime by remember { mutableStateOf(LocalDateTime.now()) }
-    var isError by remember { mutableStateOf(false) }
+fun ControlPointScreen(
+    modifier: Modifier = Modifier,
+    controlPointViewModel: ControlPointViewModel = viewModel()
+) {
+    val controlPointUiState by controlPointViewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         while (true) {
             delay(1000)
-            currentTime = LocalDateTime.now()
+            controlPointViewModel.updateCurrentTime()
         }
     }
 
-    val duration = Duration.between(startTime, currentTime)
-
-    fun onActionClick(action: Int) {
-        val error = bibValueInput.isEmpty() || !isNumber(bibValueInput) || bibValueInput.toInt() <= 0 || bibValueInput.toInt() > 1000
-        if (error) {
-            isError = true
-            return
-        }
-
-        isError = false
-        when (action) {
-            0 -> {
-                // DNF
-            }
-            1 -> {
-                // DSQ
-            }
-            2 -> {
-                // DNS
-            }
-            3 -> {
-                // Send
-            }
-        }
-    }
+    val duration = Duration.between(
+        controlPointUiState.startTime,
+        controlPointUiState.currentTime)
 
     Column {
         Text(
@@ -101,31 +81,29 @@ fun ControlPointScreen(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.Center
         ) {
             TextField(
-                value = bibValueInput,
-                onValueChange = { bibValueInput = it
-                    isError = false},
+                value = controlPointUiState.bibValueInput,
+                onValueChange = { controlPointViewModel.updateBibValueInput(it) },
                 label = { Text(stringResource(id = R.string.bib)) },
                 placeholder = { Text(stringResource(id = R.string.bib_placeholder)) },
                 leadingIcon = {
-                    if (isError)
+                    if (controlPointUiState.isError)
                         Icon(Icons.Filled.Warning, contentDescription = stringResource(id = R.string.bib_error), tint = MaterialTheme.colorScheme.error)
                     else
                         Icon(Icons.Filled.Face, contentDescription = stringResource(id = R.string.bib)) },
                 trailingIcon = {
-                    if (bibValueInput.isNotEmpty())
+                    if (controlPointUiState.bibValueInput.isNotEmpty())
                         ButtonWithIcon(
                             icon= Icons.Filled.Clear,
-                            onClick = { bibValueInput = ""
-                            isError = false}) },
+                            onClick = { controlPointViewModel.clearBibValueInput() })},
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Send
                 ),
-                keyboardActions = KeyboardActions(onSend = {onActionClick(0)}),
-                isError = isError,
+                keyboardActions = KeyboardActions(onSend = { controlPointViewModel.onAction(0) }),
+                isError = controlPointUiState.isError,
                 supportingText = {
-                    if (isError) {
+                    if (controlPointUiState.isError) {
                         Text(
                             text = stringResource(id = R.string.bib_error),
                             color = MaterialTheme.colorScheme.error,
@@ -134,33 +112,41 @@ fun ControlPointScreen(modifier: Modifier = Modifier) {
                     }
                 }
             )
-            IconButton(onClick = { onActionClick(0) }) {
+            IconButton(onClick = { controlPointViewModel.onAction(0)}) {
                 Icon(Icons.Filled.Send, contentDescription = null)
             }
-            CancelRunActions(onActionClick= { onActionClick(it) })
+            CancelRunActions(
+                openAlertDialog = controlPointUiState.openAlertDialog,
+                isExpanded = controlPointUiState.expanded,
+                toggleExpanded = { controlPointViewModel.toggleExpanded() },
+                closeExpanded = { controlPointViewModel.closeExpanded() },
+                closeAll = { controlPointViewModel.closeAll() },
+                promptAction = { controlPointViewModel.promptAction(it) },
+                onActionClick= { controlPointViewModel.onActionWithoutId() }
+            )
         }
     }
 }
 
 @Composable
-fun CancelRunActions(onActionClick: (action: Int) -> Unit) {
-    var expanded by remember { mutableStateOf(false)}
-    var openAlertDialog by remember { mutableStateOf(false)}
-    var actionToPrompt by remember { mutableIntStateOf(-1) }
-
-    fun promptAction(action: Int) {
-        actionToPrompt = action
-        openAlertDialog = true
-    }
+fun CancelRunActions(
+    openAlertDialog: Boolean = false,
+    isExpanded: Boolean = false,
+    toggleExpanded: () -> Unit,
+    closeExpanded: () -> Unit,
+    closeAll: () -> Unit,
+    promptAction: (action: Int) -> Unit,
+    onActionClick: () -> Unit
+) {
 
     Box(modifier = Modifier
         .wrapContentSize(Alignment.TopEnd)) {
-        IconButton(onClick = { expanded = !expanded }) {
+        IconButton(onClick = toggleExpanded) {
             Icon(Icons.Filled.MoreVert, contentDescription = stringResource(id = R.string.more))
         }
         DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
+            expanded = isExpanded,
+            onDismissRequest = { closeExpanded() },
         ) {
             DropdownMenuItem(
                 onClick = { promptAction(1) },
@@ -179,27 +165,22 @@ fun CancelRunActions(onActionClick: (action: Int) -> Unit) {
 
     if (openAlertDialog) {
         AlertDialog(
-            onDismissRequest = {
-                openAlertDialog = false
-                expanded = false},
+            onDismissRequest = { closeAll() },
             icon = { Icon(Icons.Filled.Warning, contentDescription = stringResource(id = R.string.remove_athlete_title)) },
             title = { Text(text = stringResource(id = R.string.remove_athlete_title)) },
             text = { Text(text = stringResource(id = R.string.remove_athlete_text)) },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        openAlertDialog = false
-                        expanded = false
-                        onActionClick(actionToPrompt)},
+                        closeAll()
+                        onActionClick()},
                 ) {
                     Text(text = stringResource(id = R.string.remove))
                 }
             },
             dismissButton = {
                 TextButton(
-                    onClick = {
-                        openAlertDialog = false
-                        expanded = false},
+                    onClick = { closeAll() },
                 ) {
                     Text(text = stringResource(id = R.string.keep))
                 }
@@ -213,8 +194,4 @@ private fun formatDuration(duration: Duration): String {
     val minutes = (duration.toMinutes() % 60).toString().padStart(2, '0')
     val seconds = (duration.seconds % 60).toString().padStart(2, '0')
     return "$hours:$minutes:$seconds"
-}
-
-private fun isNumber(value: String): Boolean {
-    return value.toIntOrNull() != null
 }
