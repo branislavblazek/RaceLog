@@ -1,4 +1,4 @@
-package com.blazek10.racelog.ui
+package com.blazek10.racelog.ui.athletelist
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,21 +22,23 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blazek10.racelog.R
 
 @Composable
-fun AthleteListScreen(modifier: Modifier = Modifier) {
-    var searchText by remember { mutableStateOf("") }
+fun AthleteListScreen(
+    modifier: Modifier = Modifier,
+    athleteListViewModel: AthleteListViewModel = viewModel()
+) {
+    val athleteListUiState by athleteListViewModel.uiState.collectAsState()
     val athletes = listOf(
         "John Doe", "Jane Smith", "Mary Johnson", "James Williams",
         "Patricia Brown", "Robert Jones", "Linda Garcia", "Michael Miller",
@@ -56,10 +58,12 @@ fun AthleteListScreen(modifier: Modifier = Modifier) {
                 ButtonWithIcon(
                     icon = Icons.Filled.ArrowBack,
                     onClick = { /*TODO*/ })
-                SearchBar(searchText, onSearchTextChange = { searchText = it })
+                SearchBar(
+                    athleteListUiState.searchText,
+                    onSearchTextChange = { athleteListViewModel.updateSearchText(it) })
             }
             Spacer(modifier = Modifier.height(16.dp))
-            AthleteList(athletes, searchText)
+            AthleteList(athletes, athleteListUiState.searchText)
         }
     }
 }

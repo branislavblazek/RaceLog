@@ -28,10 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -43,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blazek10.racelog.R
-import com.blazek10.racelog.ui.ButtonWithIcon
+import com.blazek10.racelog.ui.athletelist.ButtonWithIcon
 import kotlinx.coroutines.delay
 import java.time.Duration
 
@@ -94,7 +90,8 @@ fun ControlPointScreen(
                     if (controlPointUiState.bibValueInput.isNotEmpty())
                         ButtonWithIcon(
                             icon= Icons.Filled.Clear,
-                            onClick = { controlPointViewModel.clearBibValueInput() })},
+                            onClick = { controlPointViewModel.clearBibValueInput() })
+                },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
