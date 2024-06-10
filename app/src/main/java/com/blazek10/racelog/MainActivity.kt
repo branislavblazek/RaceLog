@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.blazek10.racelog.ui.racelog.RaceLogApp
 import com.blazek10.racelog.ui.theme.RaceLogTheme
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,6 +13,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             RaceLogTheme {
                 RaceLogApp()
+                FirebaseApp.initializeApp(this)
             }
         }
     }

@@ -14,10 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -65,9 +67,10 @@ fun RaceLogAppBar(
 
 @Composable
 fun RaceLogApp(
-    //viewModel: RaceLogViewModel = viewModel(),
+    raceLogViewModel: RaceLogViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
+    val raceLogUiState by raceLogViewModel.uiState.collectAsState()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = RaceLogScreen.valueOf(
         backStackEntry?.destination?.route ?: RaceLogScreen.Start.name)
@@ -101,6 +104,7 @@ fun RaceLogApp(
             composable(route = RaceLogScreen.AthleteList.name) {
                 AthleteListScreen(
                     onAthleteClicked = {
+                        raceLogViewModel.updateAthleteId(it)
                         navController.navigate(RaceLogScreen.AthleteInfo.name) },
                     modifier = Modifier
                         .fillMaxSize()
@@ -108,7 +112,7 @@ fun RaceLogApp(
             }
             composable(route = RaceLogScreen.AthleteInfo.name) {
                 AthleteInfoScreen(
-                    //onBackClicked = { navController.popBackStack() },
+                    athleteId = raceLogUiState.selectedAthleteId,
                     modifier = Modifier
                         .fillMaxSize()
                 )
@@ -124,8 +128,6 @@ fun RaceLogApp(
             }
             composable(route = RaceLogScreen.ControlPointInfo.name) {
                 ControlPointScreen(
-                    //onBackClicked = {
-                        //navController.popBackStack() },
                     modifier = Modifier
                         .fillMaxSize()
                 )

@@ -31,20 +31,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blazek10.racelog.R
 import com.blazek10.racelog.ui.components.BackgroundOverlay
+import com.blazek10.racelog.ui.db.Athlete
+import com.blazek10.racelog.ui.db.AthletesViewModel
 
 @Composable
 fun AthleteListScreen(
     onAthleteClicked: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
-    athleteListViewModel: AthleteListViewModel = viewModel()
+    athleteListViewModel: AthleteListViewModel = viewModel(),
+    athletesViewModel: AthletesViewModel = viewModel()
 ) {
     val athleteListUiState by athleteListViewModel.uiState.collectAsState()
-    val athletes = listOf(
-        "John Doe", "Jane Smith", "Mary Johnson", "James Williams",
-        "Patricia Brown", "Robert Jones", "Linda Garcia", "Michael Miller",
-        "Elizabeth Davis", "David Martinez", "Barbara Rodriguez", "Charles Wilson",
-        "Thomas Moore", "Christopher Taylor", "Daniel Anderson Anderson Anderson", "Paul Thomas"
-    )
+    val athletesData = athletesViewModel.state.value
+
     BackgroundOverlay(imageRes = R.drawable.background_list
     ) {
         Column(modifier = Modifier.padding(top=16.dp, start=16.dp)) {
@@ -52,7 +51,7 @@ fun AthleteListScreen(
                 athleteListUiState.searchText,
                 onSearchTextChange = { athleteListViewModel.updateSearchText(it) })
             Spacer(modifier = Modifier.height(16.dp))
-            AthleteList(athletes, athleteListUiState.searchText, onAthleteClicked)
+            AthleteList(athletesData, athleteListUiState.searchText, onAthleteClicked)
         }
     }
 }
@@ -94,27 +93,30 @@ fun ButtonWithIcon(icon: ImageVector, onClick: () -> Unit) {
 
 @Composable
 fun AthleteList(
-    athletes: List<String>,
+    athletes: List<Athlete>,
     searchText: String,
     onClick: (id: Int) -> Unit = {}
 ) {
     val filteredAthletes = if (searchText.isEmpty())
         athletes else
-            athletes.filter { it.contains(searchText, ignoreCase = true) }
+            athletes.filter {
+                it.bib.toString().contains(searchText, ignoreCase = true) ||
+                it.name.contains(searchText, ignoreCase = true) ||
+                it.lastName.contains(searchText, ignoreCase = true)
+            }
 
     LazyColumn (
 //        modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
         items(filteredAthletes) {athlete ->
-            AthleteItem(athlete, athletes.indexOf(athlete) + 1, onClick)
+            AthleteItem(athlete, onClick)
         }
     }
 }
 
 @Composable
 fun AthleteItem(
-    athlete: String,
-    index: Int,
+    athlete: Athlete,
     onClick: (id: Int) -> Unit = {}
 ) {
     Column(
@@ -129,21 +131,16 @@ fun AthleteItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "$index.",
+                text = "#${athlete.bib}",
                 modifier = Modifier.padding(end = 8.dp),
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "#34",
-                modifier = Modifier.padding(end = 8.dp),
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = athlete,
+                text = "${athlete.name} ${athlete.lastName}",
                 modifier = Modifier.weight(1f),
                 fontWeight = FontWeight.Bold
             )
-            Button(onClick = {onClick(index) }) {
+            Button(onClick = {onClick(athlete.bib) }) {
                 Text(text = stringResource(id = R.string.view))
             }
         }

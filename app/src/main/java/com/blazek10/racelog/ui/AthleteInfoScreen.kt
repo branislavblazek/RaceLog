@@ -15,40 +15,63 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blazek10.racelog.R
+import com.blazek10.racelog.ui.db.Athlete
+import com.blazek10.racelog.ui.db.AthleteViewModel
 
 @Composable
-fun AthleteInfoScreen(modifier: Modifier = Modifier) {
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        InfoHeader()
-        Spacer(modifier = Modifier.size(16.dp))
-        InfoContent(modifier)
+fun AthleteInfoScreen(
+    athleteId: Int,
+    modifier: Modifier = Modifier,
+    athleteViewModel: AthleteViewModel = viewModel()
+) {
+    athleteViewModel.getData(athleteId)
+    val athleteData = athleteViewModel.state.value
+
+    if (athleteData != null) {
+        Column(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 24.dp, end=16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            InfoHeader(athlete = athleteData)
+
+            Spacer(modifier = Modifier.size(16.dp))
+            InfoContent(athlete = athleteData, modifier)
+        }
     }
 }
 
 @Composable
-fun InfoHeader(modifier: Modifier = Modifier) {
+fun InfoHeader(
+    athlete: Athlete,
+    modifier: Modifier = Modifier
+) {
     Row (
         modifier
     ) {
         Text(
-            text = "#345",
-            style = TextStyle(fontSize=28.sp)
+            text = "#${athlete.bib}",
+            style = TextStyle(fontSize=28.sp),
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.size(16.dp))
         Text(
-            text = "John Doe",
-            style = TextStyle(fontSize=28.sp)
+            text = "${athlete.name} ${athlete.lastName}",
+            style = TextStyle(fontSize=28.sp),
+            fontWeight = FontWeight.Bold
         )
     }
 }
 
 @Composable
-fun InfoContent(modifier: Modifier = Modifier) {
+fun InfoContent(
+    athlete: Athlete,
+    modifier: Modifier = Modifier
+) {
+    val age = 2024 - athlete.born
+
     Column {
         Text(
             text = stringResource(id = R.string.status) + ": " + stringResource(id = R.string.progress),
@@ -63,15 +86,15 @@ fun InfoContent(modifier: Modifier = Modifier) {
             style = TextStyle(fontSize = 16.sp)
         )
         Text(
-            text = stringResource(id = R.string.country) + ": SVK",
+            text = stringResource(id = R.string.country) + ": ${athlete.country}",
             style = TextStyle(fontSize = 16.sp)
         )
         Text(
-            text = stringResource(id = R.string.age) + ": 25",
+            text = stringResource(id = R.string.age) + ": $age",
             style = TextStyle(fontSize = 16.sp)
         )
         Text(
-            text = stringResource(id = R.string.team) + ": Terminovka.sk",
+            text = stringResource(id = R.string.team) + ": ${athlete.team}",
             style = TextStyle(fontSize = 16.sp)
         )
         Spacer(modifier = Modifier.size(16.dp))

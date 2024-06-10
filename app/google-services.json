@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "257205683236",
+    "project_id": "racelog-2aef5",
+    "storage_bucket": "racelog-2aef5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:257205683236:android:f38f7bd1510376ad2b04b1",
+        "android_client_info": {
+          "package_name": "com.blazek10.racelog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPezC9konAvzioj6i-3KC1ad-Q1JytihM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
