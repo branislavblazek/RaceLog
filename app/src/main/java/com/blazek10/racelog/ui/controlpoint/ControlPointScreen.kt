@@ -45,6 +45,8 @@ import java.time.Duration
 
 @Composable
 fun ControlPointScreen(
+    id: Int,
+    name: String,
     modifier: Modifier = Modifier,
     controlPointViewModel: ControlPointViewModel = viewModel()
 ) {
@@ -62,6 +64,14 @@ fun ControlPointScreen(
         controlPointUiState.currentTime)
 
     Column {
+        Text(
+            text = "$name (#$id)",
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        )
         Text(
             text = formatDuration(duration),
             fontSize = 56.sp,

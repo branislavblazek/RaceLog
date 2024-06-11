@@ -10,8 +10,8 @@ class ControlPointLoginViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ControlPointLoginUiState())
     val uiState: StateFlow<ControlPointLoginUiState> = _uiState.asStateFlow()
 
-    fun updateName(name: String) {
-       _uiState.update { currentState -> currentState.copy(controlPointName = name) }
+    fun updateId(id: String) {
+       _uiState.update { currentState -> currentState.copy(controlPointId = id) }
     }
 
     fun updatePass(pass: String) {
@@ -20,5 +20,9 @@ class ControlPointLoginViewModel : ViewModel() {
 
     fun toggleShowPass() {
         _uiState.update { currentState -> currentState.copy(showPass = !currentState.showPass) }
+    }
+
+    fun reset() {
+        _uiState.update { ControlPointLoginUiState() }
     }
 }

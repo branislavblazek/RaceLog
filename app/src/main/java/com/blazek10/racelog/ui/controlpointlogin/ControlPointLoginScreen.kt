@@ -38,24 +38,39 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blazek10.racelog.R
 import com.blazek10.racelog.ui.components.BackgroundOverlay
+import com.blazek10.racelog.ui.db.ControlPointViewModel
 
 @Composable
 fun ControlPointLoginScreen(
-    onLogin: () -> Unit,
+    onLogin: (name: String, id: Int) -> Unit,
     modifier: Modifier = Modifier,
-    controlPointLoginViewModel: ControlPointLoginViewModel = viewModel()
+    controlPointLoginViewModel: ControlPointLoginViewModel = viewModel(),
+    controlPointViewModel: ControlPointViewModel = viewModel(),
 ) {
     val controlPointLoginUiState by controlPointLoginViewModel.uiState.collectAsState()
+    val controlPointData = controlPointViewModel.state.value
+
+    if (controlPointData != null && controlPointData.id > 0) {
+        controlPointViewModel.reset()
+        controlPointLoginViewModel.reset()
+        onLogin(
+            controlPointData.name,
+            controlPointData.id
+        )
+    }
 
     BackgroundOverlay(imageRes = R.drawable.background_login) {
         LoginContent(
-            controlPointLoginUiState.controlPointName,
-            { controlPointLoginViewModel.updateName(it) },
+            controlPointLoginUiState.controlPointId,
+            { controlPointLoginViewModel.updateId( it ) },
             controlPointLoginUiState.controlPointPass,
             { controlPointLoginViewModel.updatePass(it) },
             controlPointLoginUiState.showPass,
             { controlPointLoginViewModel.toggleShowPass() },
-            onLogin,
+            { controlPointViewModel.login(
+                controlPointLoginUiState.controlPointId,
+                controlPointLoginUiState.controlPointPass)
+            },
             modifier
         )
     }

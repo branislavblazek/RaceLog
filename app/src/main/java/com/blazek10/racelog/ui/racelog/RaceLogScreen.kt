@@ -119,8 +119,9 @@ fun RaceLogApp(
             }
             composable(route = RaceLogScreen.ControlPointLogin.name) {
                 ControlPointLoginScreen(
-                    onLogin = {
-                        navController.navigate(RaceLogScreen.ControlPointInfo.name) },
+                    onLogin = { name, id ->
+                        raceLogViewModel.updateControlPoint(name, id)
+                        navController.navigate(RaceLogScreen.ControlPointInfo.name)},
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))
@@ -128,6 +129,8 @@ fun RaceLogApp(
             }
             composable(route = RaceLogScreen.ControlPointInfo.name) {
                 ControlPointScreen(
+                    id = raceLogUiState.selectedControlPointId,
+                    name = raceLogUiState.selectedControlPointName,
                     modifier = Modifier
                         .fillMaxSize()
                 )
