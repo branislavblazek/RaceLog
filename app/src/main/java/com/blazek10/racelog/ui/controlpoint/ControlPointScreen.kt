@@ -4,9 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -40,7 +44,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blazek10.racelog.R
 import com.blazek10.racelog.ui.athletelist.ButtonWithIcon
+import com.blazek10.racelog.ui.components.NameWithTime
+import com.blazek10.racelog.ui.components.formatDuration
+import com.blazek10.racelog.ui.components.isNumber
+import com.blazek10.racelog.ui.db.RaceLogsViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.update
 import java.time.Duration
 
 @Composable
@@ -48,9 +57,45 @@ fun ControlPointScreen(
     id: Int,
     name: String,
     modifier: Modifier = Modifier,
-    controlPointViewModel: ControlPointViewModel = viewModel()
+    controlPointViewModel: ControlPointViewModel = viewModel(),
+    raceLogsViewModel: RaceLogsViewModel = viewModel()
 ) {
+    raceLogsViewModel.getData(null, id)
+
     val controlPointUiState by controlPointViewModel.uiState.collectAsState()
+    val raceLogsData = raceLogsViewModel.state.value
+    val sortedRaceLogData = raceLogsData.sortedByDescending { it.time }
+
+    val duration = Duration.between(
+        controlPointUiState.startTime,
+        controlPointUiState.currentTime)
+
+    fun onSendAction() {
+        val error = controlPointUiState.bibValueInput.isEmpty()
+                || !isNumber(controlPointUiState.bibValueInput)
+                || controlPointUiState.bibValueInput.toInt() <= 0
+                || controlPointUiState.bibValueInput.toInt() > 1000
+
+        controlPointViewModel.setError(error)
+
+        if (!error) {
+            val time = duration.toMinutes().toInt()*60 + duration.seconds.toInt()
+            raceLogsViewModel.setData(
+                controlPointUiState.bibValueInput.toInt(),
+                id,
+                dnf = controlPointUiState.actionToPrompt == 1,
+                dsq = controlPointUiState.actionToPrompt == 2,
+                dns = controlPointUiState.actionToPrompt == 3,
+                finished = controlPointUiState.actionToPrompt == 0,
+                time = time)
+
+        }
+    }
+
+    fun callAction(actionId: Int) {
+        controlPointViewModel.setActionToPrompt(actionId)
+        onSendAction()
+    }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -58,10 +103,6 @@ fun ControlPointScreen(
             controlPointViewModel.updateCurrentTime()
         }
     }
-
-    val duration = Duration.between(
-        controlPointUiState.startTime,
-        controlPointUiState.currentTime)
 
     Column {
         Text(
@@ -107,7 +148,7 @@ fun ControlPointScreen(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Send
                 ),
-                keyboardActions = KeyboardActions(onSend = { controlPointViewModel.onAction(0) }),
+                keyboardActions = KeyboardActions(onSend = { callAction(0) }),
                 isError = controlPointUiState.isError,
                 supportingText = {
                     if (controlPointUiState.isError) {
@@ -119,7 +160,7 @@ fun ControlPointScreen(
                     }
                 }
             )
-            IconButton(onClick = { controlPointViewModel.onAction(0)}) {
+            IconButton(onClick = { callAction(0)}) {
                 Icon(Icons.Filled.Send, contentDescription = null)
             }
             CancelRunActions(
@@ -129,9 +170,23 @@ fun ControlPointScreen(
                 closeExpanded = { controlPointViewModel.closeExpanded() },
                 closeAll = { controlPointViewModel.closeAll() },
                 promptAction = { controlPointViewModel.promptAction(it) },
-                onActionClick= { controlPointViewModel.onActionWithoutId() }
+                onActionClick= { onSendAction() }
             )
         }
+    }
+
+    Spacer(modifier = Modifier.size(16.dp))
+
+    LazyColumn (
+        modifier = Modifier.padding(top = 300.dp, start = 16.dp)
+    ){
+        items(sortedRaceLogData) { log ->
+            NameWithTime(
+                name = "#${log.athleteBib.toString()}",
+                time = log.time
+            )
+        }
+
     }
 }
 
@@ -194,11 +249,4 @@ fun CancelRunActions(
             }
         )
     }
-}
-
-private fun formatDuration(duration: Duration): String {
-    val hours = duration.toHours().toString().padStart(2, '0')
-    val minutes = (duration.toMinutes() % 60).toString().padStart(2, '0')
-    val seconds = (duration.seconds % 60).toString().padStart(2, '0')
-    return "$hours:$minutes:$seconds"
 }

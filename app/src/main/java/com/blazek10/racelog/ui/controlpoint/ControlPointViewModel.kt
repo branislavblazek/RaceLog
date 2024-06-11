@@ -30,38 +30,10 @@ class ControlPointViewModel : ViewModel() {
         ) }
     }
 
-    fun onAction(actionId: Int) {
-        val error = _uiState.value.bibValueInput.isEmpty()
-                || !isNumber(_uiState.value.bibValueInput)
-                || _uiState.value.bibValueInput.toInt() <= 0
-                || _uiState.value.bibValueInput.toInt() > 1000
-
+    fun setError(value: Boolean) {
         _uiState.update { currentState -> currentState.copy(
-            isError = error
+            isError = value
         ) }
-
-        if (!error) {
-            // TODO: send
-        }
-
-        when (actionId) {
-            0 -> {
-                // DNF
-            }
-            1 -> {
-                // DSQ
-            }
-            2 -> {
-                // DNS
-            }
-            3 -> {
-                // Send
-            }
-        }
-    }
-
-    fun onActionWithoutId() {
-        onAction(_uiState.value.actionToPrompt)
     }
 
     fun promptAction(actionId: Int) {
@@ -90,7 +62,9 @@ class ControlPointViewModel : ViewModel() {
         ) }
     }
 
-    private fun isNumber(value: String): Boolean {
-        return value.toIntOrNull() != null
+    fun setActionToPrompt(actionId: Int) {
+        _uiState.update { currentState -> currentState.copy(
+            actionToPrompt = actionId
+        ) }
     }
 }
